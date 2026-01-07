@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIFA Ranking Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
+    <style>
+        :root {
+            --primary: #00A9E0;
+            --secondary: #00B159;
+            --accent: #FF6B00;
+            --dark: #1a1a2e;
+            --darker: #0f0f1e;
+            --light: #f5f7fa;
+            --border: #e0e0e0;
+            --text: #333;
+            --text-light: #666;
+            --success: #00B159;
+            --warning: #FF6B00;
+            --danger: #E63946;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 169, 224, 0.3);
+        }
+
+        h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: white;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .tab {
+            font-family: 'Rajdhani', sans-serif;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--accent), #ff8c42);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 32px;
+            color: var(--dark);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Work Sans', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        button {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 169, 224, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 169, 224, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #d62828);
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(230, 57, 70, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        .rank-cell {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .points-cell {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .change-positive {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .change-neutral {
+            color: var(--text-light);
+        }
+
+        .match-list {
+            margin-top: 20px;
+        }
+
+        .match-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .match-info {
+            flex: 1;
+        }
+
+        .match-result {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--dark);
+        }
+
+        .match-teams {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .match-details {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 169, 224, 0.3);
+        }
+
+        .stat-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .stat-card .value {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .result-radio {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .result-radio label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            text-transform: none;
+        }
+
+        .result-radio input[type="radio"] {
+            width: auto;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(0, 177, 89, 0.1);
+            border-left: 4px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-info {
+            background: rgba(0, 169, 224, 0.1);
+            border-left: 4px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+
+        .team-dropdown {
+            position: absolute;
+            background: white;
+            border: 2px solid var(--primary);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            width: calc(100% - 4px);
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-dropdown.show {
+            display: block;
+        }
+
+        .team-option {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+
+        .team-option:hover {
+            background: var(--light);
+        }
+
+        .team-option:last-child {
+            border-bottom: none;
+        }
+
+        .team-option .team-rank {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .team-option .team-points {
+            font-size: 13px;
+            color: var(--text-light);
+            float: right;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .scenario-box {
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .scenario-box h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scenario-box.win {
+            border-left-color: var(--success);
+        }
+
+        .scenario-box.draw {
+            border-left-color: var(--warning);
+        }
+
+        .scenario-team {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .scenario-team-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .scenario-points {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .save-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 177, 89, 0.4);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>⚽ FIFA Ranking Calculator</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('ranking')">Current Ranking</button>
+            <button class="tab" onclick="switchTab('add-match')">Add Match</button>
+            <button class="tab" onclick="switchTab('changes')">Points Changes</button>
+            <button class="tab" onclick="switchTab('test')">Test Simulator</button>
+            <div style="margin-left: auto; display: flex; gap: 10px;">
+                <button onclick="exportData()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 12px 20px; font-size: 14px;">💾 Export</button>
+                <button onclick="importData()" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 12px 20px; font-size: 14px;">📥 Import</button>
+                <button class="btn-danger" onclick="clearAllData()" style="padding: 12px 20px; font-size: 14px;">🗑️ Clear All</button>
+            </div>
+        </div>
+
+        <!-- Current Ranking Tab -->
+        <div id="ranking" class="tab-content active">
+            <div class="card">
+                <h2>Current FIFA Rankings</h2>
+                <div class="search-box">
+                    <input type="text" id="search-ranking" placeholder="Search team..." oninput="filterRanking()">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="ranking-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Points</th>
+                                <th>Previous Rank</th>
+                                <th>Rank Change</th>
+                                <th>Points Change</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Match Tab -->
+        <div id="add-match" class="tab-content">
+            <div class="card">
+                <h2>Add Match Result</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Home Team</label>
+                        <input type="text" id="home-team" placeholder="Search team..." autocomplete="off" oninput="filterTeamOptions('home-team', 'home-team-list')">
+                        <div id="home-team-list" class="team-dropdown"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Away Team</label>
+                        <input type="text" id="away-team" placeholder="Search team..." autocomplete="off" oninput="filterTeamOptions('away-team', 'away-team-list')">
+                        <div id="away-team-list" class="team-dropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Match Result</label>
+                    <div class="result-radio">
+                        <label>
+                            <input type="radio" name="result" value="home" checked> Home Win
+                        </label>
+                        <label>
+                            <input type="radio" name="result" value="draw"> Draw
+                        </label>
+                        <label>
+                            <input type="radio" name="result" value="away"> Away Win
+                        </label>
+                        <label>
+                            <input type="radio" name="result" value="home-pen"> Home Win (Penalties)
+                        </label>
+                        <label>
+                            <input type="radio" name="result" value="away-pen"> Away Win (Penalties)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Match Importance</label>
+                    <select id="match-importance">
+                        <option value="5">Friendly (Outside FIFA Window) - 5 points</option>
+                        <option value="10">Friendly (Inside FIFA Window) - 10 points</option>
+                        <option value="15">Nations League Group/QF - 15 points</option>
+                        <option value="25">Nations League SF/Final & Continental Qualifiers - 25 points</option>
+                        <option value="35">Continental Tournament (Group to R16) - 35 points</option>
+                        <option value="40">Continental Tournament (QF onwards) - 40 points</option>
+                        <option value="50">World Cup (Group & R16) - 50 points</option>
+                        <option value="60">World Cup (QF onwards) - 60 points</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none;">
+                        <input type="checkbox" id="knockout-round" style="width: auto; margin: 0;">
+                        <span style="font-weight: 600; color: var(--accent);">Knockout Round (No negative points for losing team)</span>
+                    </label>
+                </div>
+
+                <button onclick="addMatch()">Add Match & Update Rankings</button>
+            </div>
+
+            <div class="card">
+                <h2>Match History</h2>
+                <div id="match-history" class="match-list">
+                    <p style="color: var(--text-light);">No matches added yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Points Changes Tab -->
+        <div id="changes" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Most Matches Played</h3>
+                    <div class="value" id="most-matches">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, var(--success), #00d66c);">
+                    <h3>Biggest Points Gain</h3>
+                    <div class="value" id="biggest-gain">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, var(--danger), #ff5757);">
+                    <h3>Biggest Points Loss</h3>
+                    <div class="value" id="biggest-loss">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Top Movers (Points Gained)</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Points Gained</th>
+                                <th>Current Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gainers-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Biggest Losers (Points Lost)</h2>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Points Lost</th>
+                                <th>Current Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="losers-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Simulator Tab -->
+        <div id="test" class="tab-content">
+            <div class="alert alert-info">
+                <strong>Test Mode:</strong> Simulate matches based on your current ranking. The test ranking starts with your current standings and updates as you add test matches. You can test multiple scenarios and reset to current ranking anytime.
+            </div>
+
+            <div class="card">
+                <h2>Simulate Match</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Home Team</label>
+                        <input type="text" id="test-home-team" placeholder="Search team..." autocomplete="off" oninput="filterTeamOptions('test-home-team', 'test-home-team-list')">
+                        <div id="test-home-team-list" class="team-dropdown"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Away Team</label>
+                        <input type="text" id="test-away-team" placeholder="Search team..." autocomplete="off" oninput="filterTeamOptions('test-away-team', 'test-away-team-list')">
+                        <div id="test-away-team-list" class="team-dropdown"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Match Result</label>
+                    <div class="result-radio">
+                        <label>
+                            <input type="radio" name="test-result" value="home" checked> Home Win
+                        </label>
+                        <label>
+                            <input type="radio" name="test-result" value="draw"> Draw
+                        </label>
+                        <label>
+                            <input type="radio" name="test-result" value="away"> Away Win
+                        </label>
+                        <label>
+                            <input type="radio" name="test-result" value="home-pen"> Home Win (Penalties)
+                        </label>
+                        <label>
+                            <input type="radio" name="test-result" value="away-pen"> Away Win (Penalties)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Match Importance</label>
+                    <select id="test-match-importance">
+                        <option value="5">Friendly (Outside FIFA Window) - 5 points</option>
+                        <option value="10">Friendly (Inside FIFA Window) - 10 points</option>
+                        <option value="15">Nations League Group/QF - 15 points</option>
+                        <option value="25">Nations League SF/Final & Continental Qualifiers - 25 points</option>
+                        <option value="35">Continental Tournament (Group to R16) - 35 points</option>
+                        <option value="40">Continental Tournament (QF onwards) - 40 points</option>
+                        <option value="50">World Cup (Group & R16) - 50 points</option>
+                        <option value="60">World Cup (QF onwards) - 60 points</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; text-transform: none;">
+                        <input type="checkbox" id="test-knockout-round" style="width: auto; margin: 0;">
+                        <span style="font-weight: 600; color: var(--accent);">Knockout Round (No negative points + Penalty scenarios)</span>
+                    </label>
+                </div>
+
+                <button onclick="calculateScenarios()" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); margin-right: 10px;">📊 Calculate All Scenarios</button>
+                <button onclick="simulateMatch()">Simulate Match</button>
+                <button class="btn-danger" onclick="resetTest()">Reset Test Ranking</button>
+            </div>
+
+            <div id="scenarios-results" class="card" style="display: none;">
+                <h2>Match Scenarios</h2>
+                <div id="scenarios-content"></div>
+            </div>
+
+            <div class="card">
+                <h2>Test Ranking Preview</h2>
+                <div class="search-box">
+                    <input type="text" id="search-test" placeholder="Search team..." oninput="filterTestRanking()">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team</th>
+                                <th>Points</th>
+                                <th>Change from Current</th>
+                            </tr>
+                        </thead>
+                        <tbody id="test-ranking-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Country code mapping for flags (ISO 3166-1 alpha-2)
+        const countryFlags = {
+            "Spain": "es", "Argentina": "ar", "France": "fr", "England": "gb-eng", "Brazil": "br",
+            "Portugal": "pt", "Netherlands": "nl", "Belgium": "be", "Germany": "de", "Croatia": "hr",
+            "Morocco": "ma", "Italy": "it", "Colombia": "co", "USA": "us", "Mexico": "mx",
+            "Uruguay": "uy", "Switzerland": "ch", "Japan": "jp", "Senegal": "sn", "IR Iran": "ir",
+            "Denmark": "dk", "Korea Republic": "kr", "Ecuador": "ec", "Austria": "at", "Türkiye": "tr",
+            "Australia": "au", "Canada": "ca", "Ukraine": "ua", "Norway": "no", "Panama": "pa",
+            "Poland": "pl", "Wales": "gb-wls", "Russia": "ru", "Algeria": "dz", "Egypt": "eg",
+            "Scotland": "gb-sct", "Serbia": "rs", "Nigeria": "ng", "Paraguay": "py", "Hungary": "hu",
+            "Tunisia": "tn", "Côte d'Ivoire": "ci", "Sweden": "se", "Czechia": "cz", "Slovakia": "sk",
+            "Greece": "gr", "Romania": "ro", "Venezuela": "ve", "Costa Rica": "cr", "Uzbekistan": "uz",
+            "Peru": "pe", "Chile": "cl", "Mali": "ml", "Qatar": "qa", "Slovenia": "si",
+            "Congo DR": "cd", "Cameroon": "cm", "Iraq": "iq", "Republic of Ireland": "ie", "Saudi Arabia": "sa",
+            "South Africa": "za", "Burkina Faso": "bf", "Albania": "al", "Jordan": "jo", "Honduras": "hn",
+            "North Macedonia": "mk", "Cabo Verde": "cv", "United Arab Emirates": "ae", "Northern Ireland": "gb-nir", "Jamaica": "jm",
+            "Bosnia and Herzegovina": "ba", "Ghana": "gh", "Georgia": "ge", "Iceland": "is", "Finland": "fi",
+            "Bolivia": "bo", "Israel": "il", "Gabon": "ga", "Oman": "om", "Kosovo": "xk",
+            "Guinea": "gn", "Curaçao": "cw", "Montenegro": "me", "Haiti": "ht", "Uganda": "ug",
+            "Syria": "sy", "New Zealand": "nz", "Bulgaria": "bg", "Angola": "ao", "Bahrain": "bh",
+            "Zambia": "zm", "Benin": "bj", "China PR": "cn", "Guatemala": "gt", "Palestine": "ps",
+            "Thailand": "th", "Equatorial Guinea": "gq", "Trinidad and Tobago": "tt", "Belarus": "by", "El Salvador": "sv",
+            "Tajikistan": "tj", "Mozambique": "mz", "Luxembourg": "lu", "Kyrgyz Republic": "kg", "Madagascar": "mg",
+            "Armenia": "am", "Vietnam": "vn", "Lebanon": "lb", "Comoros": "km", "Niger": "ne",
+            "Libya": "ly", "Tanzania": "tz", "Kenya": "ke", "Kazakhstan": "kz", "Mauritania": "mr",
+            "The Gambia": "gm", "Sudan": "sd", "Namibia": "na", "Korea DPR": "kp", "Sierra Leone": "sl",
+            "Malaysia": "my", "Indonesia": "id", "Suriname": "sr", "Togo": "tg", "Faroe Islands": "fo",
+            "Malawi": "mw", "Azerbaijan": "az", "Cyprus": "cy", "Zimbabwe": "zw", "Estonia": "ee",
+            "Rwanda": "rw", "Nicaragua": "ni", "Guinea-Bissau": "gw", "Congo": "cg", "Kuwait": "kw",
+            "Philippines": "ph", "Turkmenistan": "tm", "Botswana": "bw", "Central African Republic": "cf", "Latvia": "lv",
+            "Liberia": "lr", "India": "in", "Dominican Republic": "do", "Lesotho": "ls", "Burundi": "bi",
+            "Lithuania": "lt", "Ethiopia": "et", "Singapore": "sg", "Yemen": "ye", "New Caledonia": "nc",
+            "Guyana": "gy", "Solomon Islands": "sb", "Hong Kong, China": "hk", "St Kitts and Nevis": "kn", "Fiji": "fj",
+            "Puerto Rico": "pr", "Tahiti": "pf", "Maldives": "mv", "Vanuatu": "vu", "Chinese Taipei": "tw",
+            "Malta": "mt", "Afghanistan": "af", "Myanmar": "mm", "Grenada": "gd", "Antigua and Barbuda": "ag",
+            "Cuba": "cu", "St Lucia": "lc", "South Sudan": "ss", "Bermuda": "bm", "Papua New Guinea": "pg",
+            "St Vincent and the Grenadines": "vc", "Andorra": "ad", "Eswatini": "sz", "Montserrat": "ms", "Mauritius": "mu",
+            "Chad": "td", "Barbados": "bb", "Cambodia": "kh", "Bangladesh": "bd", "Belize": "bz",
+            "Nepal": "np", "Dominica": "dm", "American Samoa": "as", "Mongolia": "mn", "Cook Islands": "ck",
+            "Samoa": "ws", "Brunei Darussalam": "bn", "Sao Tome and Principe": "st", "São Tomé and Príncipe": "st", "Laos": "la",
+            "Aruba": "aw", "Bhutan": "bt", "Macao": "mo", "Sri Lanka": "lk", "Cayman Islands": "ky",
+            "Djibouti": "dj", "Tonga": "to", "Timor-Leste": "tl", "Pakistan": "pk", "Somalia": "so",
+            "Guam": "gu", "Gibraltar": "gi", "Seychelles": "sc", "Turks and Caicos Islands": "tc", "Liechtenstein": "li",
+            "Bahamas": "bs", "US Virgin Islands": "vi", "British Virgin Islands": "vg", "Anguilla": "ai", "San Marino": "sm"
+        };
+
+        // Initial FIFA Ranking Data (December 2024 - Latest Update)
+        const initialTeams = [
+            { rank: 1, name: "Spain", points: 1877.18, prevRank: 1 },
+            { rank: 2, name: "Argentina", points: 1873.33, prevRank: 2 },
+            { rank: 3, name: "France", points: 1870, prevRank: 3 },
+            { rank: 4, name: "England", points: 1834.12, prevRank: 4 },
+            { rank: 5, name: "Brazil", points: 1760.46, prevRank: 5 },
+            { rank: 6, name: "Portugal", points: 1756.38, prevRank: 6 },
+            { rank: 7, name: "Netherlands", points: 1756.27, prevRank: 7 },
+            { rank: 8, name: "Belgium", points: 1730.71, prevRank: 8 },
+            { rank: 9, name: "Germany", points: 1724.15, prevRank: 9 },
+            { rank: 10, name: "Croatia", points: 1716.88, prevRank: 10 },
+            { rank: 11, name: "Morocco", points: 1716.34, prevRank: 11 },
+            { rank: 12, name: "Italy", points: 1702.06, prevRank: 12 },
+            { rank: 13, name: "Colombia", points: 1701.3, prevRank: 13 },
+            { rank: 14, name: "USA", points: 1681.88, prevRank: 14 },
+            { rank: 15, name: "Mexico", points: 1675.75, prevRank: 15 },
+            { rank: 16, name: "Uruguay", points: 1672.62, prevRank: 16 },
+            { rank: 17, name: "Switzerland", points: 1654.69, prevRank: 17 },
+            { rank: 18, name: "Japan", points: 1650.12, prevRank: 18 },
+            { rank: 19, name: "Senegal", points: 1648.07, prevRank: 19 },
+            { rank: 20, name: "IR Iran", points: 1617.02, prevRank: 20 },
+            { rank: 21, name: "Denmark", points: 1616.75, prevRank: 21 },
+            { rank: 22, name: "Korea Republic", points: 1599.45, prevRank: 22 },
+            { rank: 23, name: "Ecuador", points: 1591.73, prevRank: 23 },
+            { rank: 24, name: "Austria", points: 1585.51, prevRank: 24 },
+            { rank: 25, name: "Türkiye", points: 1582.69, prevRank: 25 },
+            { rank: 26, name: "Australia", points: 1574.01, prevRank: 26 },
+            { rank: 27, name: "Canada", points: 1559.15, prevRank: 27 },
+            { rank: 28, name: "Ukraine", points: 1557.47, prevRank: 28 },
+            { rank: 29, name: "Norway", points: 1553.14, prevRank: 29 },
+            { rank: 30, name: "Panama", points: 1540.43, prevRank: 30 },
+            { rank: 31, name: "Poland", points: 1532.04, prevRank: 31 },
+            { rank: 32, name: "Wales", points: 1529.71, prevRank: 32 },
+            { rank: 33, name: "Russia", points: 1524.52, prevRank: 33 },
+            { rank: 34, name: "Algeria", points: 1517.68, prevRank: 34 },
+            { rank: 35, name: "Egypt", points: 1515.18, prevRank: 35 },
+            { rank: 36, name: "Scotland", points: 1506.77, prevRank: 36 },
+            { rank: 37, name: "Serbia", points: 1506.34, prevRank: 37 },
+            { rank: 38, name: "Nigeria", points: 1502.46, prevRank: 38 },
+            { rank: 39, name: "Paraguay", points: 1501.5, prevRank: 39 },
+            { rank: 40, name: "Hungary", points: 1496.29, prevRank: 40 },
+            { rank: 41, name: "Tunisia", points: 1494.86, prevRank: 41 },
+            { rank: 42, name: "Côte d'Ivoire", points: 1489.59, prevRank: 42 },
+            { rank: 43, name: "Sweden", points: 1487.13, prevRank: 43 },
+            { rank: 44, name: "Czechia", points: 1487, prevRank: 44 },
+            { rank: 45, name: "Slovakia", points: 1485.65, prevRank: 45 },
+            { rank: 46, name: "Greece", points: 1480.38, prevRank: 46 },
+            { rank: 47, name: "Romania", points: 1465.78, prevRank: 47 },
+            { rank: 48, name: "Venezuela", points: 1465.22, prevRank: 48 },
+            { rank: 49, name: "Costa Rica", points: 1464.24, prevRank: 49 },
+            { rank: 50, name: "Uzbekistan", points: 1462.03, prevRank: 50 },
+            { rank: 51, name: "Peru", points: 1459.37, prevRank: 51 },
+            { rank: 52, name: "Chile", points: 1457.84, prevRank: 52 },
+            { rank: 53, name: "Mali", points: 1453.03, prevRank: 53 },
+            { rank: 54, name: "Qatar", points: 1451.96, prevRank: 54 },
+            { rank: 55, name: "Slovenia", points: 1447.31, prevRank: 55 },
+            { rank: 56, name: "Congo DR", points: 1444.16, prevRank: 56 },
+            { rank: 57, name: "Cameroon", points: 1440.43, prevRank: 57 },
+            { rank: 58, name: "Iraq", points: 1436.94, prevRank: 58 },
+            { rank: 59, name: "Republic of Ireland", points: 1435.04, prevRank: 59 },
+            { rank: 60, name: "Saudi Arabia", points: 1429.48, prevRank: 60 },
+            { rank: 61, name: "South Africa", points: 1426.73, prevRank: 61 },
+            { rank: 62, name: "Burkina Faso", points: 1401.83, prevRank: 62 },
+            { rank: 63, name: "Albania", points: 1401.07, prevRank: 63 },
+            { rank: 64, name: "Jordan", points: 1388.93, prevRank: 64 },
+            { rank: 65, name: "Honduras", points: 1379.54, prevRank: 65 },
+            { rank: 66, name: "North Macedonia", points: 1378.57, prevRank: 66 },
+            { rank: 67, name: "Cabo Verde", points: 1370.49, prevRank: 67 },
+            { rank: 68, name: "United Arab Emirates", points: 1370.47, prevRank: 68 },
+            { rank: 69, name: "Northern Ireland", points: 1366.02, prevRank: 69 },
+            { rank: 70, name: "Jamaica", points: 1362.46, prevRank: 70 },
+            { rank: 71, name: "Bosnia and Herzegovina", points: 1362.37, prevRank: 71 },
+            { rank: 72, name: "Ghana", points: 1351.09, prevRank: 72 },
+            { rank: 73, name: "Georgia", points: 1347.88, prevRank: 73 },
+            { rank: 74, name: "Iceland", points: 1344.72, prevRank: 74 },
+            { rank: 75, name: "Finland", points: 1341.81, prevRank: 75 },
+            { rank: 76, name: "Bolivia", points: 1329.56, prevRank: 76 },
+            { rank: 77, name: "Israel", points: 1328.14, prevRank: 77 },
+            { rank: 78, name: "Gabon", points: 1321.25, prevRank: 78 },
+            { rank: 79, name: "Oman", points: 1311.46, prevRank: 79 },
+            { rank: 80, name: "Kosovo", points: 1308.84, prevRank: 80 },
+            { rank: 81, name: "Guinea", points: 1307.05, prevRank: 81 },
+            { rank: 82, name: "Curaçao", points: 1302.7, prevRank: 82 },
+            { rank: 83, name: "Montenegro", points: 1297.09, prevRank: 83 },
+            { rank: 84, name: "Haiti", points: 1294.49, prevRank: 84 },
+            { rank: 85, name: "Uganda", points: 1283.01, prevRank: 85 },
+            { rank: 86, name: "Syria", points: 1282.62, prevRank: 86 },
+            { rank: 87, name: "New Zealand", points: 1279.25, prevRank: 87 },
+            { rank: 88, name: "Bulgaria", points: 1272.19, prevRank: 88 },
+            { rank: 89, name: "Angola", points: 1271.54, prevRank: 89 },
+            { rank: 90, name: "Bahrain", points: 1258.53, prevRank: 90 },
+            { rank: 91, name: "Zambia", points: 1258.4, prevRank: 91 },
+            { rank: 92, name: "Benin", points: 1255.72, prevRank: 92 },
+            { rank: 93, name: "China PR", points: 1249.08, prevRank: 93 },
+            { rank: 94, name: "Guatemala", points: 1245.77, prevRank: 94 },
+            { rank: 95, name: "Palestine", points: 1244.73, prevRank: 95 },
+            { rank: 96, name: "Thailand", points: 1241.27, prevRank: 96 },
+            { rank: 97, name: "Equatorial Guinea", points: 1239.09, prevRank: 97 },
+            { rank: 98, name: "Trinidad and Tobago", points: 1227.32, prevRank: 98 },
+            { rank: 99, name: "Belarus", points: 1227.09, prevRank: 99 },
+            { rank: 100, name: "El Salvador", points: 1226.65, prevRank: 100 },
+            { rank: 101, name: "Tajikistan", points: 1224.93, prevRank: 101 },
+            { rank: 102, name: "Mozambique", points: 1223.48, prevRank: 102 },
+            { rank: 103, name: "Luxembourg", points: 1218.91, prevRank: 103 },
+            { rank: 104, name: "Kyrgyz Republic", points: 1201.22, prevRank: 104 },
+            { rank: 105, name: "Madagascar", points: 1198.87, prevRank: 105 },
+            { rank: 106, name: "Armenia", points: 1196.08, prevRank: 106 },
+            { rank: 107, name: "Vietnam", points: 1189.51, prevRank: 107 },
+            { rank: 108, name: "Lebanon", points: 1187.96, prevRank: 108 },
+            { rank: 109, name: "Comoros", points: 1186.41, prevRank: 109 },
+            { rank: 110, name: "Niger", points: 1185.09, prevRank: 110 },
+            { rank: 111, name: "Libya", points: 1183.06, prevRank: 111 },
+            { rank: 112, name: "Tanzania", points: 1181.22, prevRank: 112 },
+            { rank: 113, name: "Kenya", points: 1179.54, prevRank: 113 },
+            { rank: 114, name: "Kazakhstan", points: 1172, prevRank: 114 },
+            { rank: 115, name: "Mauritania", points: 1171.35, prevRank: 115 },
+            { rank: 116, name: "The Gambia", points: 1161.55, prevRank: 116 },
+            { rank: 117, name: "Sudan", points: 1154.44, prevRank: 117 },
+            { rank: 118, name: "Namibia", points: 1153.22, prevRank: 118 },
+            { rank: 119, name: "Korea DPR", points: 1151.05, prevRank: 119 },
+            { rank: 120, name: "Sierra Leone", points: 1149.1, prevRank: 120 },
+            { rank: 121, name: "Malaysia", points: 1145.89, prevRank: 121 },
+            { rank: 122, name: "Indonesia", points: 1144.93, prevRank: 122 },
+            { rank: 123, name: "Suriname", points: 1140.54, prevRank: 123 },
+            { rank: 124, name: "Togo", points: 1140.35, prevRank: 124 },
+            { rank: 125, name: "Faroe Islands", points: 1135.42, prevRank: 125 },
+            { rank: 126, name: "Malawi", points: 1133.75, prevRank: 126 },
+            { rank: 127, name: "Azerbaijan", points: 1132.97, prevRank: 127 },
+            { rank: 128, name: "Cyprus", points: 1128.5, prevRank: 128 },
+            { rank: 129, name: "Zimbabwe", points: 1123.69, prevRank: 129 },
+            { rank: 130, name: "Estonia", points: 1123.11, prevRank: 130 },
+            { rank: 131, name: "Rwanda", points: 1117.78, prevRank: 131 },
+            { rank: 132, name: "Nicaragua", points: 1116.86, prevRank: 132 },
+            { rank: 133, name: "Guinea-Bissau", points: 1108.09, prevRank: 133 },
+            { rank: 134, name: "Congo", points: 1105.96, prevRank: 134 },
+            { rank: 135, name: "Kuwait", points: 1105.1, prevRank: 135 },
+            { rank: 136, name: "Philippines", points: 1090.95, prevRank: 136 },
+            { rank: 137, name: "Turkmenistan", points: 1087.52, prevRank: 137 },
+            { rank: 138, name: "Botswana", points: 1084.56, prevRank: 138 },
+            { rank: 139, name: "Central African Republic", points: 1083.57, prevRank: 139 },
+            { rank: 140, name: "Latvia", points: 1082.68, prevRank: 140 },
+            { rank: 141, name: "Liberia", points: 1081.46, prevRank: 141 },
+            { rank: 142, name: "India", points: 1079.52, prevRank: 142 },
+            { rank: 143, name: "Dominican Republic", points: 1077.49, prevRank: 143 },
+            { rank: 144, name: "Lesotho", points: 1065.97, prevRank: 144 },
+            { rank: 145, name: "Burundi", points: 1060.22, prevRank: 145 },
+            { rank: 146, name: "Lithuania", points: 1058.34, prevRank: 146 },
+            { rank: 147, name: "Ethiopia", points: 1055.36, prevRank: 147 },
+            { rank: 148, name: "Singapore", points: 1050.35, prevRank: 148 },
+            { rank: 149, name: "Yemen", points: 1049.49, prevRank: 149 },
+            { rank: 150, name: "New Caledonia", points: 1042.62, prevRank: 150 },
+            { rank: 151, name: "Guyana", points: 1041.9, prevRank: 151 },
+            { rank: 152, name: "Solomon Islands", points: 1039.86, prevRank: 152 },
+            { rank: 153, name: "Hong Kong, China", points: 1038.14, prevRank: 153 },
+            { rank: 154, name: "St Kitts and Nevis", points: 1035.25, prevRank: 154 },
+            { rank: 155, name: "Fiji", points: 1029.7, prevRank: 155 },
+            { rank: 156, name: "Puerto Rico", points: 1020.07, prevRank: 156 },
+            { rank: 157, name: "Tahiti", points: 1019.84, prevRank: 157 },
+            { rank: 158, name: "Maldives", points: 1013.64, prevRank: 158 },
+            { rank: 159, name: "Vanuatu", points: 1013.52, prevRank: 159 },
+            { rank: 160, name: "Chinese Taipei", points: 1012.07, prevRank: 160 },
+            { rank: 161, name: "Malta", points: 996.89, prevRank: 161 },
+            { rank: 162, name: "Afghanistan", points: 991.19, prevRank: 162 },
+            { rank: 163, name: "Myanmar", points: 990.81, prevRank: 163 },
+            { rank: 164, name: "Grenada", points: 989.59, prevRank: 164 },
+            { rank: 165, name: "Antigua and Barbuda", points: 986.98, prevRank: 165 },
+            { rank: 166, name: "Cuba", points: 980.49, prevRank: 166 },
+            { rank: 167, name: "St Lucia", points: 980.28, prevRank: 167 },
+            { rank: 168, name: "South Sudan", points: 977.5, prevRank: 168 },
+            { rank: 169, name: "Bermuda", points: 976.87, prevRank: 169 },
+            { rank: 170, name: "Papua New Guinea", points: 974.9, prevRank: 170 },
+            { rank: 171, name: "St Vincent and the Grenadines", points: 963.74, prevRank: 171 },
+            { rank: 172, name: "Andorra", points: 958.68, prevRank: 172 },
+            { rank: 173, name: "Eswatini", points: 943.43, prevRank: 173 },
+            { rank: 174, name: "Montserrat", points: 919.75, prevRank: 174 },
+            { rank: 175, name: "Mauritius", points: 915.51, prevRank: 175 },
+            { rank: 176, name: "Chad", points: 914.85, prevRank: 176 },
+            { rank: 177, name: "Barbados", points: 914.42, prevRank: 177 },
+            { rank: 178, name: "Cambodia", points: 911.54, prevRank: 178 },
+            { rank: 179, name: "Bangladesh", points: 911.1, prevRank: 179 },
+            { rank: 180, name: "Belize", points: 910.74, prevRank: 180 },
+            { rank: 181, name: "Nepal", points: 902.52, prevRank: 181 },
+            { rank: 182, name: "Dominica", points: 901.27, prevRank: 182 },
+            { rank: 183, name: "American Samoa", points: 883.17, prevRank: 183 },
+            { rank: 184, name: "Mongolia", points: 879.75, prevRank: 184 },
+            { rank: 185, name: "Cook Islands", points: 877.53, prevRank: 185 },
+            { rank: 186, name: "Samoa", points: 876.41, prevRank: 186 },
+            { rank: 187, name: "Brunei Darussalam", points: 875.16, prevRank: 187 },
+            { rank: 188, name: "Sao Tome and Principe", points: 874.32, prevRank: 188 },
+            { rank: 189, name: "São Tomé and Príncipe", points: 871.63, prevRank: 189 },
+            { rank: 190, name: "Laos", points: 871.16, prevRank: 190 },
+            { rank: 191, name: "Aruba", points: 867.94, prevRank: 191 },
+            { rank: 192, name: "Bhutan", points: 867.86, prevRank: 192 },
+            { rank: 193, name: "Macao", points: 865.26, prevRank: 193 },
+            { rank: 194, name: "Sri Lanka", points: 857.4, prevRank: 194 },
+            { rank: 195, name: "Cayman Islands", points: 851.74, prevRank: 195 },
+            { rank: 196, name: "Djibouti", points: 847.03, prevRank: 196 },
+            { rank: 197, name: "Tonga", points: 835.64, prevRank: 197 },
+            { rank: 198, name: "Timor-Leste", points: 835.55, prevRank: 198 },
+            { rank: 199, name: "Pakistan", points: 833.16, prevRank: 199 },
+            { rank: 200, name: "Somalia", points: 823.9, prevRank: 200 },
+            { rank: 201, name: "Guam", points: 823.08, prevRank: 201 },
+            { rank: 202, name: "Gibraltar", points: 818.03, prevRank: 202 },
+            { rank: 203, name: "Seychelles", points: 805.33, prevRank: 203 },
+            { rank: 204, name: "Turks and Caicos Islands", points: 803.98, prevRank: 204 },
+            { rank: 205, name: "Liechtenstein", points: 799.8, prevRank: 205 },
+            { rank: 206, name: "Bahamas", points: 796.6, prevRank: 206 },
+            { rank: 207, name: "US Virgin Islands", points: 776.6, prevRank: 207 },
+            { rank: 208, name: "British Virgin Islands", points: 776.54, prevRank: 208 },
+            { rank: 209, name: "Anguilla", points: 759.78, prevRank: 209 },
+            { rank: 210, name: "San Marino", points: 726.03, prevRank: 210 }
+        ];
+
+        let teams = JSON.parse(JSON.stringify(initialTeams));
+        let originalTeams = JSON.parse(JSON.stringify(initialTeams));
+        let testTeams = JSON.parse(JSON.stringify(initialTeams));
+        let matches = [];
+
+        // Save data to localStorage
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('fifaRankingTeams', JSON.stringify(teams));
+                localStorage.setItem('fifaRankingMatches', JSON.stringify(matches));
+                
+                // Show save indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'save-indicator';
+                indicator.innerHTML = '✓ Data Saved';
+                document.body.appendChild(indicator);
+                
+                setTimeout(() => indicator.remove(), 2000);
+                
+                console.log('Data saved successfully');
+            } catch (e) {
+                console.error('Error saving data:', e);
+                alert('Error saving data. Your browser might have disabled localStorage.');
+            }
+        }
+
+        // Load data from localStorage
+        function loadFromLocalStorage() {
+            try {
+                const savedTeams = localStorage.getItem('fifaRankingTeams');
+                const savedMatches = localStorage.getItem('fifaRankingMatches');
+                
+                if (savedTeams && savedMatches) {
+                    teams = JSON.parse(savedTeams);
+                    matches = JSON.parse(savedMatches);
+                    
+                    updateRankings();
+                    renderMatchHistory();
+                    
+                    console.log('Data loaded successfully');
+                    return true;
+                }
+            } catch (e) {
+                console.error('Error loading data:', e);
+            }
+            return false;
+        }
+
+        // Clear all saved data and reset to initial state
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all matches and reset rankings? This cannot be undone.')) {
+                localStorage.removeItem('fifaRankingTeams');
+                localStorage.removeItem('fifaRankingMatches');
+                
+                teams = JSON.parse(JSON.stringify(initialTeams));
+                originalTeams = JSON.parse(JSON.stringify(initialTeams));
+                matches = [];
+                
+                updateRankings();
+                renderMatchHistory();
+                
+                alert('All data cleared! Rankings reset to initial state.');
+            }
+        }
+
+        // Export data to file
+        function exportData() {
+            const data = {
+                teams: teams,
+                matches: matches,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `fifa-ranking-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Import data from file
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.teams && data.matches) {
+                            teams = data.teams;
+                            matches = data.matches;
+                            
+                            saveToLocalStorage();
+                            updateRankings();
+                            renderMatchHistory();
+                            
+                            alert('Data imported successfully!');
+                        } else {
+                            alert('Invalid data format.');
+                        }
+                    } catch (error) {
+                        alert('Error importing data: ' + error.message);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Calculate expected result (We) using FIFA Elo formula
+        function calculateExpectedResult(teamAPoints, teamBPoints) {
+            const dr = teamAPoints - teamBPoints;
+            return 1 / (Math.pow(10, -dr / 600) + 1);
+        }
+
+        // Calculate points change after a match
+        function calculatePointsChange(teamPoints, opponentPoints, result, importance) {
+            const We = calculateExpectedResult(teamPoints, opponentPoints);
+            let W;
+            
+            switch(result) {
+                case 'win':
+                    W = 1;
+                    break;
+                case 'draw':
+                    W = 0.5;
+                    break;
+                case 'loss':
+                    W = 0;
+                    break;
+                case 'win-pen':
+                    W = 0.75;  // FIFA Official: "half win" for winning team
+                    break;
+                case 'loss-pen':
+                    W = 0.5;   // FIFA Official: counted as draw for defeated team
+                    break;
+            }
+            
+            return importance * (W - We);
+        }
+
+        // Update rankings
+        function updateRankings() {
+            teams.sort((a, b) => b.points - a.points);
+            teams.forEach((team, index) => {
+                team.rank = index + 1;
+            });
+            renderRanking();
+            updateChangesTab();
+            
+            // Sync test teams with current teams
+            testTeams = JSON.parse(JSON.stringify(teams));
+            renderTestRanking();
+        }
+
+        // Render ranking table
+        function renderRanking() {
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = '';
+            
+            teams.forEach(team => {
+                const row = document.createElement('tr');
+                const rankChange = team.prevRank - team.rank;
+                let rankChangeClass = 'change-neutral';
+                let rankChangeSymbol = '—';
+                
+                if (rankChange > 0) {
+                    rankChangeClass = 'change-positive';
+                    rankChangeSymbol = `↑ ${rankChange}`;
+                } else if (rankChange < 0) {
+                    rankChangeClass = 'change-negative';
+                    rankChangeSymbol = `↓ ${Math.abs(rankChange)}`;
+                }
+                
+                // Calculate points change
+                const originalTeam = originalTeams.find(t => t.name === team.name);
+                const pointsChange = team.points - originalTeam.points;
+                let pointsChangeClass = 'change-neutral';
+                let pointsChangeText = '0.00';
+                
+                if (pointsChange > 0) {
+                    pointsChangeClass = 'change-positive';
+                    pointsChangeText = `+${pointsChange.toFixed(2)}`;
+                } else if (pointsChange < 0) {
+                    pointsChangeClass = 'change-negative';
+                    pointsChangeText = pointsChange.toFixed(2);
+                }
+                
+                // Get flag icon
+                const countryCode = countryFlags[team.name] || '';
+                const flagIcon = countryCode ? `<span class="fi fi-${countryCode}" style="margin-right: 8px;"></span>` : '';
+                
+                row.innerHTML = `
+                    <td class="rank-cell">${team.rank}</td>
+                    <td>${flagIcon}<strong>${team.name}</strong></td>
+                    <td class="points-cell">${team.points.toFixed(2)}</td>
+                    <td>${team.prevRank}</td>
+                    <td class="${rankChangeClass}">${rankChangeSymbol}</td>
+                    <td class="${pointsChangeClass}" style="font-weight: 600;">${pointsChangeText}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filter and display team options based on search input
+        function filterTeamOptions(inputId, dropdownId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            const searchTerm = input.value.toLowerCase();
+            
+            // Clear previous options
+            dropdown.innerHTML = '';
+            
+            if (searchTerm.length === 0) {
+                dropdown.classList.remove('show');
+                return;
+            }
+            
+            // Filter teams based on search term
+            const filteredTeams = teams.filter(team => 
+                team.name.toLowerCase().includes(searchTerm)
+            );
+            
+            if (filteredTeams.length === 0) {
+                dropdown.innerHTML = '<div class="team-option" style="color: var(--text-light); cursor: default;">No teams found</div>';
+                dropdown.classList.add('show');
+                return;
+            }
+            
+            // Display filtered teams (limit to 10 for performance)
+            filteredTeams.slice(0, 10).forEach(team => {
+                const option = document.createElement('div');
+                option.className = 'team-option';
+                
+                // Get flag icon
+                const countryCode = countryFlags[team.name] || '';
+                const flagIcon = countryCode ? `<span class="fi fi-${countryCode}" style="margin-right: 8px;"></span>` : '';
+                
+                option.innerHTML = `
+                    <span class="team-rank">${team.rank}.</span>
+                    ${flagIcon}${team.name}
+                    <span class="team-points">${team.points.toFixed(2)}</span>
+                `;
+                option.onclick = () => selectTeam(inputId, dropdownId, team.name);
+                dropdown.appendChild(option);
+            });
+            
+            dropdown.classList.add('show');
+        }
+        
+        // Select a team from dropdown
+        function selectTeam(inputId, dropdownId, teamName) {
+            document.getElementById(inputId).value = teamName;
+            document.getElementById(dropdownId).classList.remove('show');
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.team-dropdown');
+            dropdowns.forEach(dropdown => {
+                const input = dropdown.previousElementSibling;
+                if (!dropdown.contains(event.target) && event.target !== input) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        });
+
+        // Add match
+        function addMatch() {
+            const homeTeam = document.getElementById('home-team').value.trim();
+            const awayTeam = document.getElementById('away-team').value.trim();
+            const resultRadios = document.getElementsByName('result');
+            let result = '';
+            
+            for (const radio of resultRadios) {
+                if (radio.checked) {
+                    result = radio.value;
+                    break;
+                }
+            }
+            
+            const importance = parseInt(document.getElementById('match-importance').value);
+            const isKnockout = document.getElementById('knockout-round').checked;
+            
+            if (!homeTeam || !awayTeam) {
+                alert('Please select both teams');
+                return;
+            }
+            
+            if (homeTeam === awayTeam) {
+                alert('Teams must be different');
+                return;
+            }
+            
+            // Find teams
+            const home = teams.find(t => t.name === homeTeam);
+            const away = teams.find(t => t.name === awayTeam);
+            
+            if (!home || !away) {
+                alert('Invalid team name(s). Please select teams from the dropdown.');
+                return;
+            }
+            
+            // Calculate point changes
+            let homeResult, awayResult;
+            
+            if (result === 'home') {
+                homeResult = 'win';
+                awayResult = 'loss';
+            } else if (result === 'away') {
+                homeResult = 'loss';
+                awayResult = 'win';
+            } else if (result === 'draw') {
+                homeResult = 'draw';
+                awayResult = 'draw';
+            } else if (result === 'home-pen') {
+                homeResult = 'win-pen';
+                awayResult = 'loss-pen';
+            } else if (result === 'away-pen') {
+                homeResult = 'loss-pen';
+                awayResult = 'win-pen';
+            }
+            
+            let homeChange = calculatePointsChange(home.points, away.points, homeResult, importance);
+            let awayChange = calculatePointsChange(away.points, home.points, awayResult, importance);
+            
+            // Knockout round logic: negative points become 0
+            if (isKnockout) {
+                if (homeChange < 0) homeChange = 0;
+                if (awayChange < 0) awayChange = 0;
+            }
+            
+            home.points += homeChange;
+            away.points += awayChange;
+            
+            // Store match
+            matches.push({
+                homeTeam: homeTeam,
+                awayTeam: awayTeam,
+                result: result,
+                importance: importance,
+                isKnockout: isKnockout,
+                homeChange: homeChange,
+                awayChange: awayChange,
+                date: new Date().toLocaleString()
+            });
+            
+            updateRankings();
+            renderMatchHistory();
+            saveToLocalStorage();
+            
+            // Clear inputs
+            document.getElementById('home-team').value = '';
+            document.getElementById('away-team').value = '';
+            
+            // Show success message
+            const matchCard = document.querySelector('#add-match .card');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `<strong>Match Added!</strong> ${homeTeam}: ${homeChange > 0 ? '+' : ''}${homeChange.toFixed(2)} pts | ${awayTeam}: ${awayChange > 0 ? '+' : ''}${awayChange.toFixed(2)} pts${isKnockout ? ' <em>(Knockout Round)</em>' : ''}`;
+            matchCard.insertBefore(alert, matchCard.firstChild);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Render match history
+        function renderMatchHistory() {
+            const container = document.getElementById('match-history');
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light);">No matches added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            matches.slice().reverse().forEach((match, index) => {
+                const matchItem = document.createElement('div');
+                matchItem.className = 'match-item';
+                
+                let resultText = '';
+                if (match.result === 'home') resultText = 'Home Win';
+                else if (match.result === 'away') resultText = 'Away Win';
+                else if (match.result === 'draw') resultText = 'Draw';
+                else if (match.result === 'home-pen') resultText = 'Home Win (Pen)';
+                else if (match.result === 'away-pen') resultText = 'Away Win (Pen)';
+                
+                const knockoutTag = match.isKnockout ? ' <span style="background: var(--accent); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">KO</span>' : '';
+                
+                matchItem.innerHTML = `
+                    <div class="match-info">
+                        <div class="match-teams">${match.homeTeam} vs ${match.awayTeam}${knockoutTag}</div>
+                        <div class="match-result">${resultText}</div>
+                        <div class="match-details">
+                            Importance: ${match.importance} | 
+                            ${match.homeTeam}: ${match.homeChange > 0 ? '+' : ''}${match.homeChange.toFixed(2)} pts | 
+                            ${match.awayTeam}: ${match.awayChange > 0 ? '+' : ''}${match.awayChange.toFixed(2)} pts<br>
+                            ${match.date}
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteMatch(${matches.length - 1 - index})">Delete</button>
+                `;
+                
+                container.appendChild(matchItem);
+            });
+        }
+
+        // Delete match
+        function deleteMatch(index) {
+            if (!confirm('Are you sure you want to delete this match? This will reset the rankings.')) {
+                return;
+            }
+            
+            matches.splice(index, 1);
+            
+            // Reset and replay all matches
+            teams = JSON.parse(JSON.stringify(originalTeams));
+            
+            matches.forEach(match => {
+                const home = teams.find(t => t.name === match.homeTeam);
+                const away = teams.find(t => t.name === match.awayTeam);
+                
+                let homeChange = match.homeChange;
+                let awayChange = match.awayChange;
+                
+                // Reapply knockout logic if needed (in case of recalculation)
+                if (match.isKnockout) {
+                    if (homeChange < 0) homeChange = 0;
+                    if (awayChange < 0) awayChange = 0;
+                }
+                
+                home.points += homeChange;
+                away.points += awayChange;
+            });
+            
+            updateRankings();
+            renderMatchHistory();
+            saveToLocalStorage();
+        }
+
+        // Update changes tab
+        function updateChangesTab() {
+            // Calculate changes
+            const changes = teams.map(team => {
+                const original = originalTeams.find(t => t.name === team.name);
+                return {
+                    ...team,
+                    change: team.points - original.points
+                };
+            });
+            
+            // Most matches
+            const mostMatches = matches.length;
+            document.getElementById('most-matches').textContent = mostMatches;
+            
+            // Biggest gain
+            const gains = changes.filter(t => t.change > 0).sort((a, b) => b.change - a.change);
+            const biggestGain = gains[0];
+            document.getElementById('biggest-gain').textContent = biggestGain ? `${biggestGain.change.toFixed(2)}` : '0';
+            
+            // Biggest loss
+            const losses = changes.filter(t => t.change < 0).sort((a, b) => a.change - b.change);
+            const biggestLoss = losses[0];
+            document.getElementById('biggest-loss').textContent = biggestLoss ? `${Math.abs(biggestLoss.change).toFixed(2)}` : '0';
+            
+            // Render gainers
+            const gainersBody = document.getElementById('gainers-body');
+            gainersBody.innerHTML = '';
+            
+            gains.slice(0, 10).forEach((team, index) => {
+                // Get flag icon
+                const countryCode = countryFlags[team.name] || '';
+                const flagIcon = countryCode ? `<span class="fi fi-${countryCode}" style="margin-right: 8px;"></span>` : '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank-cell">${index + 1}</td>
+                    <td>${flagIcon}<strong>${team.name}</strong></td>
+                    <td class="change-positive">+${team.change.toFixed(2)}</td>
+                    <td class="points-cell">${team.points.toFixed(2)}</td>
+                `;
+                gainersBody.appendChild(row);
+            });
+            
+            if (gains.length === 0) {
+                gainersBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-light);">No teams have gained points yet</td></tr>';
+            }
+            
+            // Render losers
+            const losersBody = document.getElementById('losers-body');
+            losersBody.innerHTML = '';
+            
+            losses.slice(0, 10).forEach((team, index) => {
+                // Get flag icon
+                const countryCode = countryFlags[team.name] || '';
+                const flagIcon = countryCode ? `<span class="fi fi-${countryCode}" style="margin-right: 8px;"></span>` : '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank-cell">${index + 1}</td>
+                    <td>${flagIcon}<strong>${team.name}</strong></td>
+                    <td class="change-negative">${team.change.toFixed(2)}</td>
+                    <td class="points-cell">${team.points.toFixed(2)}</td>
+                `;
+                losersBody.appendChild(row);
+            });
+            
+            if (losses.length === 0) {
+                losersBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-light);">No teams have lost points yet</td></tr>';
+            }
+        }
+
+        // Calculate all scenarios (home win, draw, away win)
+        function calculateScenarios() {
+            const homeTeam = document.getElementById('test-home-team').value.trim();
+            const awayTeam = document.getElementById('test-away-team').value.trim();
+            const importance = parseInt(document.getElementById('test-match-importance').value);
+            const isKnockout = document.getElementById('test-knockout-round').checked;
+            
+            if (!homeTeam || !awayTeam) {
+                alert('Please select both teams');
+                return;
+            }
+            
+            if (homeTeam === awayTeam) {
+                alert('Teams must be different');
+                return;
+            }
+            
+            // Find teams from current teams (not test teams)
+            const home = teams.find(t => t.name === homeTeam);
+            const away = teams.find(t => t.name === awayTeam);
+            
+            if (!home || !away) {
+                alert('Invalid team name(s). Please select teams from the dropdown.');
+                return;
+            }
+            
+            const scenariosContainer = document.getElementById('scenarios-results');
+            const scenariosContent = document.getElementById('scenarios-content');
+            
+            scenariosContainer.style.display = 'block';
+            scenariosContent.innerHTML = '';
+            
+            // Scenario 1: Home Win (Regular Time)
+            let homeWinChange = calculatePointsChange(home.points, away.points, 'win', importance);
+            let awayLoseChange = calculatePointsChange(away.points, home.points, 'loss', importance);
+            if (isKnockout && awayLoseChange < 0) awayLoseChange = 0;
+            
+            const scenario1 = document.createElement('div');
+            scenario1.className = 'scenario-box win';
+            scenario1.innerHTML = `
+                <h3>🏆 ${homeTeam} Wins${isKnockout ? ' (Regular Time)' : ''}</h3>
+                <div class="scenario-team">
+                    <span class="scenario-team-name">${homeTeam}</span>
+                    <span class="scenario-points change-positive">+${homeWinChange.toFixed(2)} pts → ${(home.points + homeWinChange).toFixed(2)}</span>
+                </div>
+                <div class="scenario-team">
+                    <span class="scenario-team-name">${awayTeam}</span>
+                    <span class="scenario-points ${awayLoseChange === 0 ? 'change-neutral' : 'change-negative'}">${awayLoseChange > 0 ? '+' : ''}${awayLoseChange.toFixed(2)} pts → ${(away.points + awayLoseChange).toFixed(2)}</span>
+                </div>
+            `;
+            scenariosContent.appendChild(scenario1);
+            
+            // Scenario 2: Draw (only if not knockout)
+            if (!isKnockout) {
+                let homeDrawChange = calculatePointsChange(home.points, away.points, 'draw', importance);
+                let awayDrawChange = calculatePointsChange(away.points, home.points, 'draw', importance);
+                
+                const scenario2 = document.createElement('div');
+                scenario2.className = 'scenario-box draw';
+                scenario2.innerHTML = `
+                    <h3>🤝 Draw</h3>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${homeTeam}</span>
+                        <span class="scenario-points ${homeDrawChange >= 0 ? 'change-positive' : 'change-negative'}">${homeDrawChange > 0 ? '+' : ''}${homeDrawChange.toFixed(2)} pts → ${(home.points + homeDrawChange).toFixed(2)}</span>
+                    </div>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${awayTeam}</span>
+                        <span class="scenario-points ${awayDrawChange >= 0 ? 'change-positive' : 'change-negative'}">${awayDrawChange > 0 ? '+' : ''}${awayDrawChange.toFixed(2)} pts → ${(away.points + awayDrawChange).toFixed(2)}</span>
+                    </div>
+                `;
+                scenariosContent.appendChild(scenario2);
+            }
+            
+            // Scenario 3: Away Win (Regular Time)
+            let homeLoseChange = calculatePointsChange(home.points, away.points, 'loss', importance);
+            let awayWinChange = calculatePointsChange(away.points, home.points, 'win', importance);
+            if (isKnockout && homeLoseChange < 0) homeLoseChange = 0;
+            
+            const scenario3 = document.createElement('div');
+            scenario3.className = 'scenario-box win';
+            scenario3.innerHTML = `
+                <h3>🏆 ${awayTeam} Wins${isKnockout ? ' (Regular Time)' : ''}</h3>
+                <div class="scenario-team">
+                    <span class="scenario-team-name">${homeTeam}</span>
+                    <span class="scenario-points ${homeLoseChange === 0 ? 'change-neutral' : 'change-negative'}">${homeLoseChange > 0 ? '+' : ''}${homeLoseChange.toFixed(2)} pts → ${(home.points + homeLoseChange).toFixed(2)}</span>
+                </div>
+                <div class="scenario-team">
+                    <span class="scenario-team-name">${awayTeam}</span>
+                    <span class="scenario-points change-positive">+${awayWinChange.toFixed(2)} pts → ${(away.points + awayWinChange).toFixed(2)}</span>
+                </div>
+            `;
+            scenariosContent.appendChild(scenario3);
+            
+            // Penalty scenarios (only for knockout rounds)
+            if (isKnockout) {
+                // Scenario 4: Home Win on Penalties
+                let homeWinPenChange = calculatePointsChange(home.points, away.points, 'win-pen', importance);
+                let awayLosePenChange = calculatePointsChange(away.points, home.points, 'loss-pen', importance);
+                if (awayLosePenChange < 0) awayLosePenChange = 0;
+                
+                const scenario4 = document.createElement('div');
+                scenario4.className = 'scenario-box win';
+                scenario4.style.borderLeftColor = '#8b5cf6';
+                scenario4.innerHTML = `
+                    <h3>🎯 ${homeTeam} Wins (Penalties)</h3>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${homeTeam}</span>
+                        <span class="scenario-points change-positive">+${homeWinPenChange.toFixed(2)} pts → ${(home.points + homeWinPenChange).toFixed(2)}</span>
+                    </div>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${awayTeam}</span>
+                        <span class="scenario-points ${awayLosePenChange === 0 ? 'change-neutral' : 'change-negative'}">${awayLosePenChange > 0 ? '+' : ''}${awayLosePenChange.toFixed(2)} pts → ${(away.points + awayLosePenChange).toFixed(2)}</span>
+                    </div>
+                `;
+                scenariosContent.appendChild(scenario4);
+                
+                // Scenario 5: Away Win on Penalties
+                let homeLosePenChange = calculatePointsChange(home.points, away.points, 'loss-pen', importance);
+                let awayWinPenChange = calculatePointsChange(away.points, home.points, 'win-pen', importance);
+                if (homeLosePenChange < 0) homeLosePenChange = 0;
+                
+                const scenario5 = document.createElement('div');
+                scenario5.className = 'scenario-box win';
+                scenario5.style.borderLeftColor = '#8b5cf6';
+                scenario5.innerHTML = `
+                    <h3>🎯 ${awayTeam} Wins (Penalties)</h3>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${homeTeam}</span>
+                        <span class="scenario-points ${homeLosePenChange === 0 ? 'change-neutral' : 'change-negative'}">${homeLosePenChange > 0 ? '+' : ''}${homeLosePenChange.toFixed(2)} pts → ${(home.points + homeLosePenChange).toFixed(2)}</span>
+                    </div>
+                    <div class="scenario-team">
+                        <span class="scenario-team-name">${awayTeam}</span>
+                        <span class="scenario-points change-positive">+${awayWinPenChange.toFixed(2)} pts → ${(away.points + awayWinPenChange).toFixed(2)}</span>
+                    </div>
+                `;
+                scenariosContent.appendChild(scenario5);
+            }
+            
+            // Scroll to scenarios
+            scenariosContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Test simulator
+        function simulateMatch() {
+            const homeTeam = document.getElementById('test-home-team').value.trim();
+            const awayTeam = document.getElementById('test-away-team').value.trim();
+            const resultRadios = document.getElementsByName('test-result');
+            let result = '';
+            
+            for (const radio of resultRadios) {
+                if (radio.checked) {
+                    result = radio.value;
+                    break;
+                }
+            }
+            
+            const importance = parseInt(document.getElementById('test-match-importance').value);
+            const isKnockout = document.getElementById('test-knockout-round').checked;
+            
+            if (!homeTeam || !awayTeam) {
+                alert('Please select both teams');
+                return;
+            }
+            
+            if (homeTeam === awayTeam) {
+                alert('Teams must be different');
+                return;
+            }
+            
+            // Hide scenarios
+            document.getElementById('scenarios-results').style.display = 'none';
+            
+            // Find teams
+            const home = testTeams.find(t => t.name === homeTeam);
+            const away = testTeams.find(t => t.name === awayTeam);
+            
+            if (!home || !away) {
+                alert('Invalid team name(s). Please select teams from the dropdown.');
+                return;
+            }
+            
+            // Calculate point changes
+            let homeResult, awayResult;
+            
+            if (result === 'home') {
+                homeResult = 'win';
+                awayResult = 'loss';
+            } else if (result === 'away') {
+                homeResult = 'loss';
+                awayResult = 'win';
+            } else if (result === 'draw') {
+                homeResult = 'draw';
+                awayResult = 'draw';
+            } else if (result === 'home-pen') {
+                homeResult = 'win-pen';
+                awayResult = 'loss-pen';
+            } else if (result === 'away-pen') {
+                homeResult = 'loss-pen';
+                awayResult = 'win-pen';
+            }
+            
+            let homeChange = calculatePointsChange(home.points, away.points, homeResult, importance);
+            let awayChange = calculatePointsChange(away.points, home.points, awayResult, importance);
+            
+            // Knockout round logic: negative points become 0
+            if (isKnockout) {
+                if (homeChange < 0) homeChange = 0;
+                if (awayChange < 0) awayChange = 0;
+            }
+            
+            home.points += homeChange;
+            away.points += awayChange;
+            
+            renderTestRanking();
+            
+            // Clear inputs
+            document.getElementById('test-home-team').value = '';
+            document.getElementById('test-away-team').value = '';
+            
+            // Show success message
+            const testCard = document.querySelector('#test .card');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.innerHTML = `<strong>Match Simulated!</strong> ${homeTeam}: ${homeChange > 0 ? '+' : ''}${homeChange.toFixed(2)} pts | ${awayTeam}: ${awayChange > 0 ? '+' : ''}${awayChange.toFixed(2)} pts${isKnockout ? ' <em>(Knockout Round)</em>' : ''}`;
+            testCard.insertBefore(alert, testCard.firstChild);
+            
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        // Reset test ranking
+        function resetTest() {
+            testTeams = JSON.parse(JSON.stringify(teams));
+            renderTestRanking();
+            document.getElementById('scenarios-results').style.display = 'none';
+        }
+
+        // Render test ranking
+        function renderTestRanking() {
+            testTeams.sort((a, b) => b.points - a.points);
+            testTeams.forEach((team, index) => {
+                team.testRank = index + 1;
+            });
+            
+            const tbody = document.getElementById('test-ranking-body');
+            tbody.innerHTML = '';
+            
+            testTeams.forEach(team => {
+                const currentTeam = teams.find(t => t.name === team.name);
+                const pointsChange = team.points - currentTeam.points;
+                const rankChange = currentTeam.rank - team.testRank;
+                
+                let changeClass = 'change-neutral';
+                let changeText = '—';
+                
+                if (pointsChange > 0 || rankChange > 0) {
+                    changeClass = 'change-positive';
+                    changeText = `+${pointsChange.toFixed(2)} pts`;
+                    if (rankChange > 0) changeText += ` (↑${rankChange})`;
+                } else if (pointsChange < 0 || rankChange < 0) {
+                    changeClass = 'change-negative';
+                    changeText = `${pointsChange.toFixed(2)} pts`;
+                    if (rankChange < 0) changeText += ` (↓${Math.abs(rankChange)})`;
+                }
+                
+                // Get flag icon
+                const countryCode = countryFlags[team.name] || '';
+                const flagIcon = countryCode ? `<span class="fi fi-${countryCode}" style="margin-right: 8px;"></span>` : '';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank-cell">${team.testRank}</td>
+                    <td>${flagIcon}<strong>${team.name}</strong></td>
+                    <td class="points-cell">${team.points.toFixed(2)}</td>
+                    <td class="${changeClass}">${changeText}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Filter ranking
+        function filterRanking() {
+            const search = document.getElementById('search-ranking').value.toLowerCase();
+            const rows = document.querySelectorAll('#ranking-body tr');
+            
+            rows.forEach(row => {
+                const teamName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                row.style.display = teamName.includes(search) ? '' : 'none';
+            });
+        }
+
+        // Filter test ranking
+        function filterTestRanking() {
+            const search = document.getElementById('search-test').value.toLowerCase();
+            const rows = document.querySelectorAll('#test-ranking-body tr');
+            
+            rows.forEach(row => {
+                const teamName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                row.style.display = teamName.includes(search) ? '' : 'none';
+            });
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            const dataLoaded = loadFromLocalStorage();
+            
+            if (dataLoaded) {
+                // Show notification that data was loaded
+                const container = document.querySelector('.container');
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-success';
+                alert.style.marginBottom = '20px';
+                alert.innerHTML = '<strong>Data Restored!</strong> Your previous matches and rankings have been loaded.';
+                container.insertBefore(alert, container.firstChild);
+                setTimeout(() => alert.remove(), 5000);
+            } else {
+                // No saved data, render initial state
+                updateRankings();
+            }
+        });
+    </script>
+</body>
+</html>
